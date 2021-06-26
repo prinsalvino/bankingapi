@@ -1,0 +1,4 @@
+
+target/classes/io/swagger/api/UsersApi.class
+target/classes/io/swagger/api/UsersApiController.class
+target/test-classes/io/swagger/UserControllerTest.class
