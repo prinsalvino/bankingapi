@@ -31,20 +31,12 @@ public class TransactionService {
         return (List<Transaction>) transactionRepository.findTransactionByAccountFrom(IBAN);
     }
 
-    public List<Transaction> getTransactionByUserPerformingId(Long userPerformingId) //getting transactions from the user performing
-    {
-        //CONFIG USER ACCESS LATER
-        return (List<Transaction>) transactionRepository.findTransactionByUserPerformingId(userPerformingId);
-    }
-
     public boolean checkBalance(String iban, Double amount){
         Account account = accountService.getAccountByIban(iban);
-        if(account.getIban() == iban){
-
+        if(account.getIban().equals(iban)){
             // convert double amount type into integer
             Integer amt = amount.intValue();
-
-            if(account.getBalance() > amt){
+            if(account.getBalance() >= amt){
                 return true;
             }
             else{
@@ -57,6 +49,12 @@ public class TransactionService {
     }
 
     public void createTransaction(Transaction transaction){
+        Account accFrom = accountService.getAccountByIban(transaction.getAccountFrom());
+        Account accTo = accountService.getAccountByIban(transaction.getAccountTo());
+        accFrom.setBalance(accFrom.getBalance() - transaction.getAmount().intValue());
+        accTo.setBalance(accTo.getBalance() + transaction.getAmount().intValue());
+        accountService.updateBalance(accFrom);
+        accountService.updateBalance(accTo);
         transactionRepository.save(transaction);
     }
 

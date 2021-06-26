@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-06-02T11:15:57.209Z[GMT]")
@@ -85,27 +86,29 @@ public class UsersApiController implements UsersApi {
 //    @PreAuthorize("hasAuthority('')")
     public ResponseEntity<List<User>> getUsers(@Parameter(in = ParameterIn.QUERY, description = "Get users based on Last Name" ,
                                                        schema=@Schema()) @Valid @RequestParam(value = "lastname", required = false) String lastname,
+                                               @Parameter(in = ParameterIn.QUERY, description = "Get users based on Last Name" ,
+                                                       schema=@Schema()) @Valid @RequestParam(value = "firstname", required = false) String firstname,
                                                @Parameter(in = ParameterIn.QUERY, description = "Maximum numbers of items to return" ,
                                                        schema=@Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit)
     {
         if (authenticationService.isEmployee() == true){
-            if(limit != null && lastname == null){
-                return new ResponseEntity<List<User>>(userService.getAllUserWithLimit(limit), HttpStatus.OK);
+            List<User> users = new ArrayList<>();
+            if(lastname != null && firstname != null){
+                users = userService.findByFirstNameAndLastName(firstname,lastname);
             }
-            else if(limit == null && lastname != null){
-                return new ResponseEntity<List<User>>((List<User>) userService.getByLastName(lastname), HttpStatus.OK);
+            else if(firstname != null){
+                users = userService.findByFirstName(firstname);
             }
-            else if(limit != null && lastname != null){
-                List<User> users = userService.getByLastName(lastname);
-                if (users.size() < limit){
-                    limit = users.size();
-                }
-                return new ResponseEntity<List<User>>(users.subList(0,limit), HttpStatus.OK);
+            else if(lastname != null){
+                users = userService.getByLastName(lastname);
             }
             else {
-                return new ResponseEntity<List<User>>(userService.getAllUser(), HttpStatus.OK);
+                users = userService.getAllUser();
             }
-
+            if (limit == null || users.size() < limit){
+                limit = users.size();
+            }
+            return new ResponseEntity<List<User>>(users.subList(0,limit), HttpStatus.OK);
         }
         return new ResponseEntity<List<User>>(HttpStatus.FORBIDDEN);
     }

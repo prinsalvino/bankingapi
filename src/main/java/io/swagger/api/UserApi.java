@@ -85,5 +85,6 @@ public interface UserApi {
             consumes = {"application/json"},
             method = RequestMethod.PUT)
     ResponseEntity<Void> updateCurrentUserPassword(@Parameter(in = ParameterIn.DEFAULT, description = "", schema = @Schema()) @Valid @RequestBody UserDTO userDTO);
+
 }
 

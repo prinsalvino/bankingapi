@@ -6,6 +6,7 @@ import io.swagger.model.User;
 import io.swagger.repository.AccountRepository;
 import io.swagger.repository.TransactionRepository;
 import io.swagger.repository.UserRepository;
+import io.swagger.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
@@ -31,6 +32,9 @@ public class Swagger2SpringBoot implements CommandLineRunner {
     private UserRepository userRepository;
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private TransactionService transactionService; //for test
 
 
     public static void main(String[] args) throws Exception {

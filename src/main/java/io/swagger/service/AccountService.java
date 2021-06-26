@@ -33,6 +33,16 @@ public class AccountService {
         return account;
     }
 
+    public Account getAccountByUserId(Long id){
+        for (Account account: accountRepository.getAccountByUserId(id)
+             ) {
+            if (account.getType() == Account.TypeEnum.CURRENT){
+                return account;
+            }
+        }
+        return null;
+    }
+
     public Account addAccount(Account accountBody)  {
         if (authenticationService.isEmployee()) {
             if (getAccountByIban(accountBody.getIban()) == null) {
@@ -40,6 +50,10 @@ public class AccountService {
             }
         }
         return accountBody;
+    }
+
+    public void updateBalance(Account account){
+        accountRepository.save(account);
     }
 
     @DeleteMapping

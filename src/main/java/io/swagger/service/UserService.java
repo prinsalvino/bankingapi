@@ -49,9 +49,6 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUser(){
         return (List<User>) userRepository.findAll();
     }
-    public List<User> getAllUserWithLimit(int limit){
-        return userRepository.getUsersWithLimit(limit);
-    }
 
     public void createUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -73,13 +70,19 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getByLastName(String lastname){
-        List<User> users = new ArrayList<>();
-        users.add(userRepository.findByLastName(lastname));
-        return users;
+        return userRepository.findByLastName(lastname);
     }
 
     public void deleteUserByID(Long id){
         userRepository.deleteById(id);
+    }
+
+    public List<User> findByFirstNameAndLastName(String firstname, String lastname){
+        return userRepository.findByFirstNameAndLastName(firstname,lastname);
+    }
+
+    public List<User> findByFirstName(String firstname){
+        return userRepository.findByFirstName(firstname);
     }
 
     public void updateUserById(Long id, User newUserData){
@@ -113,6 +116,9 @@ public class UserService implements UserDetailsService {
         }
         if (newUserData.getFirstName() != null) {
             target.setFirstName(newUserData.getFirstName());
+        }
+        if(newUserData.getPassword() != null){
+            target.setPassword(passwordEncoder.encode(newUserData.getPassword()));
         }
         userRepository.save(target);
     }
