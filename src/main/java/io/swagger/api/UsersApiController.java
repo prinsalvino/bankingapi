@@ -57,6 +57,9 @@ public class UsersApiController implements UsersApi {
             if (body.getType() == null) {
                 body.setType(User.TypeEnum.CUSTOMER);
             }
+            if (body.getActive() == null){
+                body.setActive(true);
+            }
             if (userValidation.checkValidEmail(body.getEmail()) == false) {
                 jsonObject.put("message", "Bad email input");
                 return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.BAD_REQUEST);

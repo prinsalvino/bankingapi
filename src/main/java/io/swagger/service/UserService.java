@@ -91,6 +91,9 @@ public class UserService implements UserDetailsService {
         if (newUserData.getType() != null) {
             target.setType(newUserData.getType());
         }
+        if (newUserData.getActive() != null) {
+            target.setActive(newUserData.getActive());
+        }
         if (newUserData.getBirthdate() != null) {
             target.setBirthdate(newUserData.getBirthdate());
         }
