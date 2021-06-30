@@ -5,7 +5,6 @@
  */
 package io.swagger.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.model.User;
 import io.swagger.model.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;

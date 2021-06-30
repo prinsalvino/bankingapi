@@ -20,7 +20,7 @@ public class AuthenticationService {
         return user.getType() == User.TypeEnum.EMPLOYEE;
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.getByUserName(name);
     }

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,10 +38,10 @@ public class AccountApiController implements AccountApi {
     }
 
     @Override
-    public ResponseEntity<List<Account>> getAccounts(@Valid @RequestParam(value = "limit", required = false, defaultValue = "3") Integer limit) {
+    public ResponseEntity<List<Account>> getAccounts(@RequestParam(value = "limit", required = false, defaultValue = "3") Integer limit) {
 
         List<Account> accountArrayList = new ArrayList<>();
-        if (limit < 0 ) {
+        if (limit < 0) {
             return new ResponseEntity<List<Account>>(HttpStatus.BAD_REQUEST);
         } else {
             for (Account account : accountService.getAccounts()) {
@@ -64,8 +63,15 @@ public class AccountApiController implements AccountApi {
     @Override
     public ResponseEntity<Account> getAccountByIBAN(String iban) throws NotFoundException {
         Account account = accountService.getAccountByIban(iban);
+        // not logged in at all : 401 Unauthorized
+
         if (!authenticationService.isEmployee()) {
-            if (!account.getUserId().equals(authenticationService.getCurrentUser().getId())) {
+
+            if (authenticationService.getCurrentUser().getId() == null) {
+
+                return new ResponseEntity<Account>(HttpStatus.UNAUTHORIZED);
+            } else if (!account.getUserId().equals(authenticationService.getCurrentUser().getId())) {
+                // don't have sufficient privileges
                 return new ResponseEntity<Account>(HttpStatus.FORBIDDEN);
             }
         }
@@ -76,9 +82,9 @@ public class AccountApiController implements AccountApi {
     public ResponseEntity addAccount(@Valid AccountDto accountDto) throws IllegalAccessException {
 
         if (!authenticationService.isEmployee()) {
-                return new ResponseEntity<Account>(HttpStatus.FORBIDDEN);
-        }else
-        {
+            // don't have sufficient privileges
+            return new ResponseEntity<Account>(HttpStatus.FORBIDDEN);
+        } else {
             Account account = new Account();
             account.setBalance(accountDto.getBalance());
             account.setActive(accountDto.getActive());
@@ -105,12 +111,19 @@ public class AccountApiController implements AccountApi {
 
     @Override
     public ResponseEntity updateAccount(String IBAN, @Valid AccountDto body) {
-        // update account information can be updated by the customer
-        // TODO add permission  later
+
         Account account = accountService.updateAccount(body, IBAN);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(account);
+        if (!authenticationService.isEmployee()) {
+
+            if (authenticationService.getCurrentUser().getId() == null) {
+
+                return new ResponseEntity<Account>(HttpStatus.UNAUTHORIZED);
+            } else if (!account.getUserId().equals(authenticationService.getCurrentUser().getId())) {
+                // don't have sufficient privileges
+                return new ResponseEntity<Account>(HttpStatus.FORBIDDEN);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(account);
     }
 
 }

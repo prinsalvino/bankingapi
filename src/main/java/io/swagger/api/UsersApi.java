@@ -58,11 +58,11 @@ public interface UsersApi {
 
             @ApiResponse(responseCode = "404", description = "The specified resource was not found", content = @Content(schema = @Schema(implementation = String.class)))})
     @RequestMapping(value = "/users",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<User>> getUsers(@Parameter(in = ParameterIn.QUERY, description = "Get users based on Last Name" ,schema=@Schema()) @Valid @RequestParam(value = "lastname", required = false) String lastname,
-                                        @Parameter(in = ParameterIn.QUERY, description = "Get users based on Last Name" ,schema=@Schema()) @Valid @RequestParam(value = "firstname", required = false) String firstname,
-                                        @Parameter(in = ParameterIn.QUERY, description = "Maximum numbers of items to return" ,schema=@Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit);
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<User>> getUsers(@Parameter(in = ParameterIn.QUERY, description = "Get users based on Last Name", schema = @Schema()) @Valid @RequestParam(value = "lastname", required = false) String lastname,
+                                        @Parameter(in = ParameterIn.QUERY, description = "Get users based on Last Name", schema = @Schema()) @Valid @RequestParam(value = "firstname", required = false) String firstname,
+                                        @Parameter(in = ParameterIn.QUERY, description = "Maximum numbers of items to return", schema = @Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit);
 
 }
 

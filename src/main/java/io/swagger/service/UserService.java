@@ -18,8 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
+
 @Getter
 @Setter
 
@@ -37,7 +37,8 @@ public class UserService implements UserDetailsService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Autowired AuthenticationService authenticationService;
+    @Autowired
+    AuthenticationService authenticationService;
 
 
     List<User> users;
@@ -46,16 +47,16 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public List<User> getAllUser(){
+    public List<User> getAllUser() {
         return (List<User>) userRepository.findAll();
     }
 
-    public void createUser(User user){
+    public void createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
-    public String getLogin(String username, String password){
+    public String getLogin(String username, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             return jwtUtil.generateToken(username, userRepository.findByUsername(username).getType());
@@ -65,27 +66,27 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public User getById(Long id){
+    public User getById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    public List<User> getByLastName(String lastname){
+    public List<User> getByLastName(String lastname) {
         return userRepository.findByLastName(lastname);
     }
 
-    public void deleteUserByID(Long id){
+    public void deleteUserByID(Long id) {
         userRepository.deleteById(id);
     }
 
-    public List<User> findByFirstNameAndLastName(String firstname, String lastname){
-        return userRepository.findByFirstNameAndLastName(firstname,lastname);
+    public List<User> findByFirstNameAndLastName(String firstname, String lastname) {
+        return userRepository.findByFirstNameAndLastName(firstname, lastname);
     }
 
-    public List<User> findByFirstName(String firstname){
+    public List<User> findByFirstName(String firstname) {
         return userRepository.findByFirstName(firstname);
     }
 
-    public void updateUserById(Long id, User newUserData){
+    public void updateUserById(Long id, User newUserData) {
         User target = userRepository.getUserById(id);
         if (newUserData.getType() != null) {
             target.setType(newUserData.getType());
@@ -117,13 +118,15 @@ public class UserService implements UserDetailsService {
         if (newUserData.getFirstName() != null) {
             target.setFirstName(newUserData.getFirstName());
         }
-        if(newUserData.getPassword() != null){
+        if (newUserData.getPassword() != null) {
             target.setPassword(passwordEncoder.encode(newUserData.getPassword()));
         }
         userRepository.save(target);
     }
 
-    public User getByUserName(String username){return userRepository.findByUsername(username);}
+    public User getByUserName(String username) {
+        return userRepository.findByUsername(username);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -137,7 +140,7 @@ public class UserService implements UserDetailsService {
                 .accountExpired(false).accountLocked(false).credentialsExpired(false).disabled(false).build();
     }
 
-    public void updateCurrentUserPassword(UserDTO newInfoUser){
+    public void updateCurrentUserPassword(UserDTO newInfoUser) {
         User user = authenticationService.getCurrentUser();
         user.setPassword(passwordEncoder.encode(newInfoUser.getPassword()));
         userRepository.save(user);

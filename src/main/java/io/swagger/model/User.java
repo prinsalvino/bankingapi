@@ -1,7 +1,6 @@
 package io.swagger.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,7 +36,7 @@ public class User {
     @JsonProperty("username")
     private String username = null;
 
-    @JsonProperty(value = "password",access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
     private String password = null;
 
     @JsonProperty("firstName")
@@ -67,11 +66,6 @@ public class User {
     private TypeEnum type = null;
     @JsonProperty("active")
     private Boolean active = null;
-
-    public User id(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public User() {
     }
@@ -105,6 +99,11 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.type = type;
         this.active = active;
+    }
+
+    public User id(Long id) {
+        this.id = id;
+        return this;
     }
 
     /**

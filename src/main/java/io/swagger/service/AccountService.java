@@ -3,9 +3,8 @@ package io.swagger.service;
 import io.swagger.model.Account;
 import io.swagger.model.AccountDto;
 import io.swagger.repository.AccountRepository;
+import io.swagger.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,7 +21,9 @@ public class AccountService {
     @Autowired
     private AuthenticationService authenticationService;
 
-    
+    @Autowired
+    private TransactionRepository transactionRepository;
+
 
     public List<Account> getAccounts() {
         return (List<Account>) accountRepository.findAll();
@@ -33,17 +34,17 @@ public class AccountService {
         return account;
     }
 
-    public Account getAccountByUserId(Long id){
-        for (Account account: accountRepository.getAccountByUserId(id)
-             ) {
-            if (account.getType() == Account.TypeEnum.CURRENT){
+    public Account getAccountByUserId(Long id) {
+        for (Account account : accountRepository.getAccountByUserId(id)
+        ) {
+            if (account.getType() == Account.TypeEnum.CURRENT) {
                 return account;
             }
         }
         return null;
     }
 
-    public Account addAccount(Account accountBody)  {
+    public Account addAccount(Account accountBody) {
         if (authenticationService.isEmployee()) {
             if (getAccountByIban(accountBody.getIban()) == null) {
                 accountRepository.save(accountBody);
@@ -52,16 +53,20 @@ public class AccountService {
         return accountBody;
     }
 
-    public void updateBalance(Account account){
+    public void updateBalance(Account account) {
         accountRepository.save(account);
     }
 
     @DeleteMapping
     public Void deleteAccount(String iban) {
-        // TODO delete an account and its transactions
 
         if (authenticationService.isEmployee()) {
             if (accountRepository.getAccountByIban(iban) != null) {
+                transactionRepository.findAll().forEach(transaction -> {
+                    if (transaction.getAccountFrom().equals(iban) || transaction.getAccountFrom().equals(iban)) {
+                        transactionRepository.deleteById(transaction.getId());
+                    }
+                });
                 accountRepository.deleteById(iban);
             }
         }

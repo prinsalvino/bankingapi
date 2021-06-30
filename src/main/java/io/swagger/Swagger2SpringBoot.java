@@ -47,9 +47,9 @@ public class Swagger2SpringBoot implements CommandLineRunner {
 
         List<User> users = new ArrayList<>();
 
-        User soumia = new User(1L,"SB",passwordEncoder.encode("pass123"),"soumia","bouhouri","sou@gmx.com",LocalDate.of(1993,8,02),"Rijswijk","2282JV","Rijswijk","062535199", User.TypeEnum.CUSTOMER,true);
-        User user = new User(3L,"user",passwordEncoder.encode("user123"),"user","bouhouri","sou@gmx.com",LocalDate.of(1993,8,02),"Rijswijk","2282JV","Rijswijk","062535199", User.TypeEnum.CUSTOMER,true);
-        User prins = new User(2L,"prinsalvino",passwordEncoder.encode("test123"),"prins","alvino","prinsalvino@gmx.com",LocalDate.of(1993,8,02),"Rijswijk","1156AX","Amsterdam","062535199", User.TypeEnum.EMPLOYEE,true);
+        User soumia = new User(1L, "SB", passwordEncoder.encode("pass123"), "soumia", "bouhouri", "sou@gmx.com", LocalDate.of(1993, 8, 02), "Rijswijk", "2282JV", "Rijswijk", "062535199", User.TypeEnum.CUSTOMER, true);
+        User user = new User(3L, "user", passwordEncoder.encode("user123"), "user", "bouhouri", "sou@gmx.com", LocalDate.of(1993, 8, 02), "Rijswijk", "2282JV", "Rijswijk", "062535199", User.TypeEnum.CUSTOMER, true);
+        User prins = new User(2L, "prinsalvino", passwordEncoder.encode("test123"), "prins", "alvino", "prinsalvino@gmx.com", LocalDate.of(1993, 8, 02), "Rijswijk", "1156AX", "Amsterdam", "062535199", User.TypeEnum.EMPLOYEE, true);
 
         users.add(soumia);
         users.add(prins);
@@ -69,8 +69,8 @@ public class Swagger2SpringBoot implements CommandLineRunner {
 
 
         List<Transaction> transactions = new ArrayList<>();
-        Transaction transaction1 = new Transaction("NL01INHO00000000010","NL01INHO00000000080",252d,"tikke pay",1L, Transaction.TransactionTypeEnum.DEPOSIT);
-        Transaction transaction2 = new Transaction("NL01INHO00000000080","NL01INHO00000000090",500d,"family support",2L, Transaction.TransactionTypeEnum.TRANSFER);
+        Transaction transaction1 = new Transaction("NL01INHO00000000010", "NL01INHO00000000080", 252d, "tikke pay", 1L, Transaction.TransactionTypeEnum.DEPOSIT);
+        Transaction transaction2 = new Transaction("NL01INHO00000000080", "NL01INHO00000000090", 500d, "family support", 2L, Transaction.TransactionTypeEnum.TRANSFER);
 
         transactions.add(transaction1);
         transactions.add(transaction2);

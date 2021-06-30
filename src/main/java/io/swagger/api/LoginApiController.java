@@ -1,10 +1,10 @@
 package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.model.UserDTO;
 import io.swagger.model.InlineResponse200;
-import io.swagger.util.JwtUtil;
+import io.swagger.model.UserDTO;
 import io.swagger.service.UserService;
+import io.swagger.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;

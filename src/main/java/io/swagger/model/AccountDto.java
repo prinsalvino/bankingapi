@@ -15,7 +15,7 @@ public class AccountDto {
     private Long userId;
     private Account.CurrencyEnum currency;
     private Account.TypeEnum type;
-    private Integer balance ;
+    private Integer balance;
 
 
 }

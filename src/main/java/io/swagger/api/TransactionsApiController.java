@@ -1,8 +1,8 @@
 package io.swagger.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.Account;
 import io.swagger.model.Transaction;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.TransactionDto;
 import io.swagger.service.AccountService;
 import io.swagger.service.AuthenticationService;
@@ -16,34 +16,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
-import org.threeten.bp.ZoneId;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-06-02T11:15:57.209Z[GMT]")
 @RestController
 public class TransactionsApiController implements TransactionsApi {
 
-    @Autowired
-    private TransactionService transactionService;
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
+    private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
+    private final ObjectMapper objectMapper;
+    private final HttpServletRequest request;
     @Autowired
     AccountService accountService;
-
-    private static final Logger log = LoggerFactory.getLogger(TransactionsApiController.class);
-
-    private final ObjectMapper objectMapper;
-
-    private final HttpServletRequest request;
+    @Autowired
+    private TransactionService transactionService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @org.springframework.beans.factory.annotation.Autowired
     public TransactionsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -66,7 +56,7 @@ public class TransactionsApiController implements TransactionsApi {
 
     @Override
     public ResponseEntity<List<Transaction>> getTransactionByIban(String iban) throws NotFoundException {
-        List<Transaction> transactions = (List<Transaction>) transactionService.getTransactionByIban(iban) ;
+        List<Transaction> transactions = (List<Transaction>) transactionService.getTransactionByIban(iban);
         return ResponseEntity
                 .status(200)
                 .body(transactions);
@@ -84,9 +74,8 @@ public class TransactionsApiController implements TransactionsApi {
         if(authenticationService.isEmployee()){
             if (setTransaction(transactionDto)){
                 jsonObject.put("message", "Success");
-                return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
-            }
-            else{
+                return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
+            } else {
                 jsonObject.put("message", "There is something wrong in your body, your balance maybe lower than your wished transfer amount");
                 return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.BAD_REQUEST);
             }
@@ -95,22 +84,31 @@ public class TransactionsApiController implements TransactionsApi {
             if (account.getIban() == transactionDto.getAccountFrom()){
                 if(setTransaction(transactionDto)){
                     jsonObject.put("message", "Success");
-                    return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
-                }
-                else {
+                    return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
+                } else {
                     jsonObject.put("message", "There is something wrong in your body, " +
                             "your balance maybe lower than your wished transfer amount or your IBAN doesnot match" +
                             "your IBAN from");
                     return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.BAD_REQUEST);
                 }
-            }
-            else {
+            } else if (transactionDto.getAccountFrom() == null) {
+                transactionDto.setAccountFrom(account.getIban());
+                if (setTransaction(transactionDto)) {
+                    jsonObject.put("message", "Success");
+                    return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
+                } else {
+                    jsonObject.put("message", "There is something wrong in your body, " +
+                            "your balance maybe lower than your wished transfer amount");
+                    return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.BAD_REQUEST);
+                }
+            } else {
                 jsonObject.put("message", "There is something wrong in your body, " +
                         "your balance maybe lower than your wished transfer amount");
                 return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.BAD_REQUEST);
             }
         }
     }
+
     private boolean setTransaction(TransactionDto transactionDto) {
         if (transactionService.checkBalance(transactionDto.getAccountFrom(), transactionDto.getAmount())) {
 
